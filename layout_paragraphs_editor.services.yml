@@ -1,0 +1,15 @@
+services:
+  layout_paragraphs_editor:
+    class: Drupal\layout_paragraphs_editor\LayoutParagraphsEditor
+    arguments: ['@entity_type.manager', '@renderer', '@layout_paragraphs_editor.tempstore']
+  layout_paragraphs_editor.tempstore:
+    class: Drupal\layout_paragraphs_editor\LayoutParagraphsEditorTempstore
+    arguments: ['@tempstore.private']
+  layout_paragraphs_editor.tempstore_repository:
+    class: Drupal\layout_paragraphs_editor\EditorTempstoreRepository
+    arguments: ['@tempstore.private']
+  layout_paragraphs_editor.param_converter:
+    class: Drupal\layout_paragraphs_editor\Routing\LayoutParagraphsEditorTempstoreParamConverter
+    arguments: ['@layout_paragraphs_editor.tempstore_repository']
+    tags:
+      - { name: paramconverter, priority: 10 }

@@ -1,0 +1,403 @@
+.lpe-enable__wrapper {
+  border-radius: 50%;
+  padding: 5px;
+  background: #fff;
+  position: absolute;
+  z-index: 100;
+  left: 10px;
+  top: 10px;
+  transition: all .15s linear;
+  opacity: 0;
+}
+.lpe-enable__button {
+  left: 5px;
+  top: 5px;
+  cursor: pointer;
+  height: 28px;
+  width: 28px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  opacity: 1;
+  text-transform: uppercase;
+  font-weight: bold;
+  opacity: 1;
+  background: url(../img/icon-edit.png) 0 0 no-repeat;
+  background-size: cover;
+  background-color: #fff;
+  transition: all .15s linear;
+}
+.lpe-enable__button span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-indent: -9999px;
+}
+.lp-editor:hover .lpe-enable__wrapper {
+  opacity: 1;
+}
+.lp-editor:hover .lpe-enable__button:hover {
+  background-color: #eee;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 1);
+}
+.lp-editor .lpe-enable__button.active {
+  opacity: 1;
+  background-color: #f5f5f5;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .20);
+}
+.lpe-banner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.lpe-banner__wrapper {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #FFF;
+  left: 0;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
+}
+.lpe-banner__title {
+  margin-top: 10px;
+  font-size: .8em;
+}
+.lpe-banner__status {
+  margin-top: 10px;
+  font-size: .8em;
+  color: #666;
+  margin-right: 10px;
+}
+/* @Todo: move this into the theme. */
+.lpe-banner__actions {
+  display: flex;
+  flex-direction: row;
+  margin: 0 !important;
+}
+.lp-editor__save {
+  margin-left: 10px;
+}
+
+.js-lpe-wrapper {
+  position: absolute;
+  z-index: 1000;
+}
+.lpe-region {
+  min-height: 40px;
+}
+.is-dragging-item .lpe-region {
+  outline: 1px dotted blue;
+}
+.is-dragging-item .t-reversed .lpe-region {
+  outline: 1px dotted white;
+}
+.lpe-component {
+  cursor: grab;
+  outline: 1px solid blue;
+  outline-color: transparent;
+  transition: all .15s linear;
+}
+.lpe-component:hover .lpe-region {
+  outline: 1px dotted rgba(0, 0, 255, 0.5);
+}
+.js-lpe-active-item,
+.js-lpe-active-item.lpe-region
+.lpe-component:hover .js-lpe-active-item {
+  outline: 1px solid blue !important;
+}
+.js-lpe-active-item.lpe-layout {
+  outline: 3px solid #fff !important;
+}
+.js-lpe-toggle {
+  position: absolute;
+}
+.lpe-controls {
+  background-color: #fff;
+  cursor: default;
+  padding: 5px;
+  margin: 7px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
+  border-radius: 25px;
+  display: flex;
+  float: left;
+}
+.lpe-controls button span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-indent: -9999px;
+}
+.lpe-up,
+.lpe-down,
+.lpe-edit,
+.lpe-delete {
+  cursor: pointer;
+  height: 28px;
+  width: 28px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  opacity: 1;
+}
+.lpe-up:hover,
+.lpe-down:hover,
+.lpe-edit:hover,
+.lpe-delete:hover {
+  opacity: 1;
+  background-color: #eee;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 1);
+}
+.lpe-up {
+  background: url(../img/icon-up.png) 0 0 no-repeat;
+  background-size: cover;
+}
+.lpe-down {
+  background: url(../img/icon-down.png) 0 0 no-repeat;
+  background-size: cover;
+}
+.lpe-component:last-of-type .lpe-down:hover,
+.lpe-component:first-of-type .lpe-up:hover {
+  background-color: transparent;
+  box-shadow: none;
+}
+.lpe-component:last-of-type .lpe-down,
+.lpe-component:first-of-type .lpe-up {
+  opacity: .3;
+  cursor: default;
+}
+.lpe-edit {
+  background: url(../img/icon-edit.png) 0 0 no-repeat;
+  background-size: cover;
+}
+.lpe-delete {
+  background: url(../img/icon-delete.png) 0 0 no-repeat;
+  background-size: cover;
+}
+
+.lp-editor__toggle {
+  border: none;
+  color: #333;
+  font-weight: normal;
+  z-index: 10;
+  opacity: 1;
+  font-size: 1.2em;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 50%;
+  background-size: cover;
+  transition: all .15s linear;
+  -webkit-appearance: none;
+  padding: 5px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, .15);
+}
+.lp-editor__toggle::before{
+  content: " ";
+  background:
+    linear-gradient(#333,#333),
+    linear-gradient(#333,#333),
+    #fff;
+  background-position:center;
+  background-size: 50% 2px, 2px 50%;
+  background-repeat:no-repeat;
+
+  color: #333;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: block;
+  transition: all .15s linear;
+}
+.lp-editor__toggle:hover::before {
+  background-color: #eee;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 1);
+}
+.lp-editor__toggle.active::before {
+  transform: rotate(45deg);
+  opacity: 1;
+}
+.lp-editor__section-menu {
+  position: relative;
+  z-index: 1000;
+  left: 50%;
+}
+.lp-editor__section-menu--group {
+  position: relative;
+  left: -50%;
+  display: flex;
+  padding: 2px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, .15);
+}
+.lp-editor__section-menu--action {
+  display: flex;
+  flex-direction: row;
+  color: #333;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: .7em;
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+.lp-editor__section-menu--action:hover {
+  text-decoration: underline;
+}
+.lp-editor__section-menu--action img {
+  height: 20px;
+  width: auto;
+  margin-right: 10px;
+}
+.js-lpe-component-menu-wrapper {
+  position: absolute;
+  width: 300px;
+  z-index: 1001;
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
+  border-radius: 15px;
+}
+.lp-editor-component-menu {
+  padding: 20px;
+}
+
+.js-lpe-component-menu-wrapper.beneath::before {
+  content: " ";
+  width: 16px;
+  height: 16px;
+  display: block;
+  left: 50%;
+  margin-top: -8px;
+  margin-left: -8px;
+  position: absolute;
+  background: #fff;
+  transform: rotate(45deg);
+}
+.js-lpe-component-menu-wrapper.above::after {
+  content: " ";
+  width: 16px;
+  height: 16px;
+  display: block;
+  left: 50%;
+  margin-top: -8px;
+  margin-left: -8px;
+  position: absolute;
+  background: #fff;
+  transform: rotate(45deg);
+}
+.lp-editor-component-menu__group--layout,
+.lp-editor-component-menu__group--content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.lp-editor-component-menu__item {
+  display: block;
+  width: 33%;
+  border: none;
+  color: #0074bd;
+  text-align: center;
+  border-radius: 10px;
+}
+.lp-editor-component-menu__item a,
+.lp-editor-component-menu__item a:not([class]) {
+  color: #0074bd !important; /* @todo remove this */
+  text-align: center;
+  display: block;
+  padding: 10px 0;
+  margin: 10px;
+  font-size: 14px;
+}
+.lp-editor-component-menu__item:hover {
+  background: #eee;
+}
+.lp-editor-component-menu__item img {
+  width: 24px;
+  height: 24px;
+}
+.gu-mirror {
+  background: #fff;
+  cursor: grabbing;
+}
+.lpe-status {
+  font-size: .8em;
+  position: relative;
+}
+.lpe-status-container {
+  position: absolute;
+  z-index: 1001;
+  left: 50%;
+  top: -20px;
+}
+.lpe-status-wrapper {
+  position: relative;
+  position: inline-block;
+  left: -50%;
+  border-radius: 25px;
+  background: #FFF;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
+  display: flex;
+  flex-direction: row;
+  color: #333;
+}
+.lpe-status__actions {
+  margin-left: 10px;
+}
+.lpe-status__undo {
+  text-decoration: none;
+}
+
+
+.loading span {
+  background-image: none;
+  opacity: 1;
+  border: 3px solid #0074bd;
+  border-radius: 50%;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: cssload-spin 575ms infinite linear;
+  -o-animation: cssload-spin 575ms infinite linear;
+  -webkit-animation: cssload-spin 575ms infinite linear;
+  -moz-animation: cssload-spin 575ms infinite linear;
+}
+
+@keyframes cssload-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes cssload-spin {
+  100% {
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-ms-keyframes cssload-spin {
+  100% {
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes cssload-spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes cssload-spin {
+  100% {
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

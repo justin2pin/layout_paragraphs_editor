@@ -1,0 +1,40 @@
+<div class="lp-editor-component-menu">
+  <h4 class="visually-hidden">{{ 'Add Item'|t }}</h4>
+  <div class="lp-editor-component-menu__search hidden">
+    <input type="text" placeholder="{{ search_text }}" />
+  </div>
+  <div class="lp-editor-component-menu__group">
+    {% if types.layout %}
+    <div class="lp-editor-component-menu__group--layout">
+    {% endif %}
+    {% for type in types.layout %}
+      <div class="lp-editor-component-menu__item type-{{type.id}} is-layout">
+        <a class="lp-editor-component-menu__action" data-type="{{ type.id }}" href="#{{ type.id }}" title="{{ type.title }}">
+        {% if type.image %}
+        <img src="{{ type.image }}" alt ="" />
+        {% endif %}
+        <div>{{ type.name }}</div>
+        </a>
+      </div>
+    {% endfor %}
+    {% if types.layout %}
+    </div>
+    {% endif %}
+    {% if types.content %}
+    <div class="lp-editor-component-menu__group--content">
+    {% endif %}
+    {% for type in types.content %}
+      <div class="lp-editor-component-menu__item type-{{type.id}}">
+        <a class="lp-editor-component-menu__action" data-type="{{ type.id }}" href="#{{ type.id }}" title="{{ type.title }}">
+        {% if type.image %}
+        <img src="{{ type.image }}" alt ="" />
+        {% endif %}
+        <div>{{ type.name }}</div>
+        </a>
+      </div>
+    {% endfor %}
+    {% if types.content %}
+    </div>
+    {% endif %}
+  </div>
+</div>

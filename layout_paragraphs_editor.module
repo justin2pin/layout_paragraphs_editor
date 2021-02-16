@@ -1,0 +1,80 @@
+<?php
+
+use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function layout_paragraphs_editor_theme() {
+  return [
+    'layout_paragraphs' => [
+      'variables' => [
+        'elements' => '',
+        'content' => '',
+      ],
+    ],
+    'layout_paragraphs_editor_item' => [
+      'render element' => 'element',
+    ],
+    'layout_paragraphs_editor_banner' => [
+      'variables' => [
+        'save_url' => NULL,
+        'cancel_url' => NULL,
+        'title' => NULL,
+      ],
+    ],
+    'layout_paragraphs_editor_controls' => [
+      'variables' => [],
+    ],
+    'layout_paragraphs_editor_component_menu' => [
+      'variables' => [
+        'types' => NULL,
+      ],
+    ],
+    'layout_paragraphs_editor_section_menu' => [
+      'variables' => [
+        'types' => NULL,
+      ],
+    ],
+    'layout_paragraphs_editor_empty_container' => [
+      'variables' => NULL,
+    ],
+    'layout_paragraphs_editor_enable' => [
+      'variables' => [
+        'url' => NULL,
+        'is_empty' => NULL,
+        'title' => NULL,
+        'field_name' => NULL,
+        'field_label' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Add needed attributes when editing a layout paragraphs layout.
+ *
+ * @param array $variables
+ *   The variables.
+ */
+function layout_paragraphs_editor_preprocess_paragraph(array &$variables) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if (strpos($route_name, 'layout_paragraphs_editor.editor') === 0) {
+    $variables['attributes']['data-uuid'] = $variables['paragraph']->uuid();
+    $variables['attributes']['data-id'] = $variables['paragraph']->id();
+    $variables['attributes']['class'][] = 'lpe-component';
+    $variables['attributes']['tabindex'] = 0;
+    if (!empty($variables['content']['regions'])) {
+      $variables['attributes']['class'][] = 'lpe-layout';
+      foreach (Element::children($variables['content']['regions']) as $region_name) {
+        $region =& $variables['content']['regions'][$region_name];
+        $region['#attributes']['class'][] = 'lpe-region';
+        $region['#attributes']['data-region'] = $region_name;
+        $region['#attributes']['data-region-uuid'] = $variables['paragraph']->uuid() . '-' . $region_name;
+        $region['#attributes']['tabindex'] = 0;
+      }
+    }
+  }
+}

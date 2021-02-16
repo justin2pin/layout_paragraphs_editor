@@ -1,0 +1,88 @@
+layout_paragraphs_editor.editor:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::init'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer content'
+layout_paragraphs_editor.editor.edit_item:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/edit/{paragraph_uuid}'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::editForm'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer content'
+layout_paragraphs_editor.editor.save:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/save'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::save'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer content'
+layout_paragraphs_editor.editor.insert_sibling:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/{sibling_uuid}/insert-sibling/{proximity}/{paragraph_type}'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::insertSibling'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+      paragraph_type:
+        type: entity:paragraphs_type
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer content'
+layout_paragraphs_editor.editor.insert_into_region:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/{parent_uuid}/insert-into-region/{region}/{paragraph_type}'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::insertIntoRegion'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+      paragraph_type:
+        type: entity:paragraphs_type
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer content'
+layout_paragraphs_editor.cancel:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/cancel'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::cancel'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer content'

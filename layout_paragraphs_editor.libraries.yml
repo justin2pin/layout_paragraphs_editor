@@ -1,0 +1,12 @@
+layout_paragraphs_editor:
+  css:
+    layout:
+      css/layout-paragraphs-editor.css: {}
+  js:
+    js/layout-paragraphs-editor.js: {}
+  dependencies:
+    - layout_paragraphs/dragula
+    - core/jquery
+    - core/drupal.dialog
+    - core/drupal.diaplog.ajax
+    - core/drupal.ajax

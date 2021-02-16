@@ -1,0 +1,8 @@
+name: 'Layout Paragraphs Editor'
+description: 'Provides a layout paragraphs editor experience.'
+type: module
+core: 8.x
+package: Layout
+core_version_requirement: ^8 || ^9
+dependencies:
+  - drupal:layout_paragraphs
