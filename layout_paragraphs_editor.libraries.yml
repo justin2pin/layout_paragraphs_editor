@@ -8,5 +8,5 @@ layout_paragraphs_editor:
     - layout_paragraphs/dragula
     - core/jquery
     - core/drupal.dialog
-    - core/drupal.diaplog.ajax
+    - core/drupal.dialog.ajax
     - core/drupal.ajax

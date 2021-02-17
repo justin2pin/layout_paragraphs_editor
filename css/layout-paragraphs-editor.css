@@ -1,9 +1,12 @@
+.lp-editor {
+  margin-bottom: 20px;
+}
 .lpe-enable__wrapper {
   border-radius: 50%;
   padding: 5px;
   background: #fff;
   position: absolute;
-  z-index: 100;
+  z-index: 90;
   left: 10px;
   top: 10px;
   transition: all .15s linear;
@@ -59,7 +62,7 @@
   background: #FFF;
   left: 0;
   padding: 20px;
-  z-index: 1000;
+  z-index: 75;
   box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
 }
 .lpe-banner__title {
@@ -80,11 +83,6 @@
 }
 .lp-editor__save {
   margin-left: 10px;
-}
-
-.js-lpe-wrapper {
-  position: absolute;
-  z-index: 1000;
 }
 .lpe-region {
   min-height: 40px;
@@ -109,11 +107,19 @@
 .lpe-component:hover .js-lpe-active-item {
   outline: 1px solid blue !important;
 }
-.js-lpe-active-item.lpe-layout {
+.lpe-layout {
+  padding: 20px;
+}
+.lpe-layout.js-lpe-active-item {
   outline: 3px solid #fff !important;
+  box-shadow: 0 0 0 4px rgba(0, 0, 255, 1);
 }
 .js-lpe-toggle {
   position: absolute;
+}
+.lpe-controls__wrapper {
+  position: absolute;
+  z-index: 95;
 }
 .lpe-controls {
   background-color: #fff;
@@ -179,14 +185,16 @@
   background: url(../img/icon-delete.png) 0 0 no-repeat;
   background-size: cover;
 }
-
-.lp-editor__toggle {
+.lpe-toggle__wrapper {
+  line-height: 1;
+}
+.lpe-toggle {
   border: none;
   color: #333;
   font-weight: normal;
   z-index: 10;
   opacity: 1;
-  font-size: 1.2em;
+  line-height: 1;
   overflow: hidden;
   background: #fff;
   border-radius: 50%;
@@ -196,7 +204,7 @@
   padding: 5px;
   box-shadow: 0 2px 15px rgba(0, 0, 0, .15);
 }
-.lp-editor__toggle::before{
+.lpe-toggle::before{
   content: " ";
   background:
     linear-gradient(#333,#333),
@@ -213,20 +221,20 @@
   display: block;
   transition: all .15s linear;
 }
-.lp-editor__toggle:hover::before {
+.lpe-toggle:hover::before {
   background-color: #eee;
   box-shadow: 0 0 1px rgba(0, 0, 0, 1);
 }
-.lp-editor__toggle.active::before {
+.lpe-toggle.active::before {
   transform: rotate(45deg);
   opacity: 1;
 }
-.lp-editor__section-menu {
+.lpe-section-menu {
   position: relative;
-  z-index: 1000;
+  z-index: 10;
   left: 50%;
 }
-.lp-editor__section-menu--group {
+.lpe-section-menu__group {
   position: relative;
   left: -50%;
   display: flex;
@@ -235,7 +243,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 15px rgba(0, 0, 0, .15);
 }
-.lp-editor__section-menu--action {
+.lpe-section-menu-button {
   display: flex;
   flex-direction: row;
   color: #333;
@@ -246,10 +254,10 @@
   border-radius: 10px;
   padding: 6px 10px;
 }
-.lp-editor__section-menu--action:hover {
+.lpe-section-menu-button:hover {
   text-decoration: underline;
 }
-.lp-editor__section-menu--action img {
+.lpe-section-menu-button img {
   height: 20px;
   width: auto;
   margin-right: 10px;
@@ -257,7 +265,7 @@
 .js-lpe-component-menu-wrapper {
   position: absolute;
   width: 300px;
-  z-index: 1001;
+  z-index: 95;
   background: #fff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
   border-radius: 15px;
@@ -330,7 +338,7 @@
 }
 .lpe-status-container {
   position: absolute;
-  z-index: 1001;
+  z-index: 99;
   left: 50%;
   top: -20px;
 }
@@ -341,7 +349,6 @@
   border-radius: 25px;
   background: #FFF;
   padding: 20px;
-  z-index: 1000;
   box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
   display: flex;
   flex-direction: row;

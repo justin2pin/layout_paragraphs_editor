@@ -196,7 +196,7 @@ class LayoutParagraphsEditorFormatter extends LayoutParagraphsFormatter {
         'componentMenu' => $this->renderer->render($component_menu),
         'sectionMenu' => $this->renderer->render($section_menu),
         'controls' => $this->renderer->render($controls),
-        'toggleButton' => '<button class="lp-editor__toggle"><span class="visually-hidden">' . $this->t('Create Content') . '</span></button>',
+        'toggleButton' => '<button class="lpe-toggle"><span class="visually-hidden">' . $this->t('Create Content') . '</span></button>',
         'baseUrl' => Url::fromRoute('layout_paragraphs_editor.editor', $base_url_params)->toString(),
         'emptyContainer' => $this->renderer->render($empty_container),
         'nestedSections' => FALSE,

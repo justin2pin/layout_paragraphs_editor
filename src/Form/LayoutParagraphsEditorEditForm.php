@@ -188,10 +188,14 @@ class LayoutParagraphsEditorEditForm extends FormBase {
           new BeforeCommand("[data-uuid={$sibling_uuid}]", $rendered_item) :
             new AfterCommand("[data-uuid={$sibling_uuid}]", $rendered_item);
       }
-      if (!empty($this->context['parent_uuid']) && !empty($this->context['region'])) {
+      elseif (!empty($this->context['parent_uuid']) && !empty($this->context['region'])) {
         $parent_uuid = $this->context['parent_uuid'];
         $region = $this->context['region'];
         $command = new AppendCommand("[data-region-uuid='{$parent_uuid}-{$region}']", $rendered_item);
+      }
+      else {
+        $lp_editor_id = $this->layoutParagraphsLayout->id();
+        $command = new AppendCommand("[data-lp-editor-id='{$lp_editor_id}']", $rendered_item);
       }
       $response->addCommand($command);
       $response->addCommand(new LayoutParagraphsEditorInvokeHookCommand(
@@ -234,8 +238,6 @@ class LayoutParagraphsEditorEditForm extends FormBase {
 
     /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
     $paragraph = $form['#paragraph'];
-    /** @var Drupal\layout_paragraph\LayoutParagraphsEditor $layout_paragraphs_editor */
-    $layout_paragraphs_editor = $form['#layout_paragraphs_editor'];
     /** @var Drupal\Core\Entity\Entity\EntityFormDisplay $display */
     $display = $form['#display'];
 

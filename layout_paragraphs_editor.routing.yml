@@ -56,6 +56,22 @@ layout_paragraphs_editor.editor.insert_sibling:
     _admin_route: TRUE
   requirements:
     _permission: 'administer content'
+layout_paragraphs_editor.editor.insert:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/insert-component/{paragraph_type}'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::insertComponent'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+      paragraph_type:
+        type: entity:paragraphs_type
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer content'
 layout_paragraphs_editor.editor.insert_into_region:
   path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/{parent_uuid}/insert-into-region/{region}/{paragraph_type}'
   defaults:

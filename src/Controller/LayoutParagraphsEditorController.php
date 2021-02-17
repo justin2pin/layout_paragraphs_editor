@@ -262,6 +262,45 @@ class LayoutParagraphsEditorController extends ControllerBase {
     );
     $response->addCommand(new OpenModalDialogCommand('Create Form', $form, ['width' => '80%']));
     return $response;
+  }
+
+  /**
+   * Insert a sibling paragraph into the field.
+   *
+   * @param Drupal\layout_paragraphs\LayoutParagraphsLayout $layout_paragraphs_layout
+   *   The layout paragraphs editor from the tempstore.
+   * @param Drupal\paragraphs\ParagraphsTypeInterface $paragraph_type
+   *   The paragraph type for the new content being added.
+   *
+   * @return Drupal\Core\Ajax\AjaxResponse
+   *   Returns the edit form render array.
+   */
+  public function insertComponent(
+    LayoutParagraphsLayout $layout_paragraphs_layout,
+    ParagraphsTypeInterface $paragraph_type) {
+
+    $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
+    $bundle_key = $entity_type->getKey('bundle');
+
+    /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+    $paragraph = $this->entityTypeManager()->getStorage('paragraph')
+      ->create([$bundle_key => $paragraph_type->id()]);
+    $layout_paragraphs_layout->appendComponent($paragraph);
+
+    $context = [
+      'insert' => TRUE,
+    ];
+
+    $response = new AjaxResponse();
+    $form = $this->formBuilder()->getForm(
+      '\Drupal\layout_paragraphs_editor\Form\LayoutParagraphsEditorEditForm',
+      $layout_paragraphs_layout,
+      $paragraph,
+      $context
+    );
+    $response->addCommand(new OpenModalDialogCommand('Create Form', $form, ['width' => '80%']));
+    return $response;
 
   }
+
 }

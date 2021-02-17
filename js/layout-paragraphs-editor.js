@@ -8,12 +8,15 @@
       this.controls = settings.controls;
       this.toggleButton = settings.toggleButton;
       this.emptyContainer = settings.emptyContainer;
-      this.$actions = this.$element.find(".lp-editor__controls");
+      this.$actions = this.$element.find(".lpe-controls");
       this.trashBin = [];
       this._intervalId = 0;
       this._interval = 200;
       this._statusIntervalId = 0;
       this._statusInterval = 3000;
+      this.$banner = $("body").append(
+        this.$element.find(".lpe-banner__wrapper")
+      );
 
       if (this.$element.find(".lpe-component").length === 0) {
         this.isEmpty();
@@ -62,7 +65,7 @@
       );
       this.$element.on(
         "click.lp-editor",
-        ".lp-editor__toggle",
+        ".lpe-toggle",
         this.onClickToggle.bind(this)
       );
       this.$element.on(
@@ -78,7 +81,7 @@
       );
       this.$element.on(
         "click.lp-editor",
-        ".lp-editor__section-menu--action",
+        ".lpe-section-menu-button",
         this.onClickSectionAction.bind(this)
       );
       this.onKeyPress = this.onKeyPress.bind(this);
@@ -200,11 +203,16 @@
 
     onClickSectionAction(e) {
       const $button = $(e.currentTarget);
-      const $sectionMenu = $button.closest(".js-lp-editor__section-menu");
+      const $sectionMenu = $button.closest(".js-lpe-section-menu");
       const placement = $sectionMenu.attr("data-placement");
       const uuid = $sectionMenu.attr("data-container-uuid");
       const type = $button.attr("data-type");
-      this.insertSiblingComponent(uuid, type, placement);
+      if (uuid) {
+        this.insertSiblingComponent(uuid, type, placement);
+      } else {
+        this.insertComponent(type);
+      }
+
     }
 
     /**
@@ -292,7 +300,7 @@
     }
 
     removeToggle() {
-      this.$element.find(".lp-editor__toggle").remove();
+      //this.$element.find(".lpe-toggle").remove();
       if (this.$componentMenu) {
         this.$componentMenu.remove();
       }
@@ -305,7 +313,7 @@
      * @param {string} method jQuery method - prepend|append
      */
     insertToggle($container, placement, method = "prepend") {
-      const $toggleButton = $(`<div class="js-lp-editor__toggle"></div>`)
+      const $toggleButton = $(`<div class="js-lpe-toggle lpe-toggle__wrapper"></div>`)
         .append(
           $(this.toggleButton).attr({
             "data-placement": placement,
@@ -321,11 +329,13 @@
         .fadeIn(100);
 
       const offset = $container.offset();
-      const toggleHeight = $toggleButton.outerHeight();
+      const toggleHeight = $toggleButton.height();
       const toggleWidth = $toggleButton.outerWidth();
-      const height = $container.height();
+      const height = $container.outerHeight();
       const width = $container.outerWidth();
       const left = Math.floor(offset.left + width / 2 - toggleWidth / 2);
+      console.log(toggleHeight);
+      console.log(height);
       let top = "";
       switch (placement) {
         case "insert":
@@ -346,7 +356,7 @@
 
     insertSectionMenu($container, placement, method) {
       const $sectionMenu = $(
-        `<div class="js-lp-editor__section-menu">${this.sectionMenu}</div>`
+        `<div class="js-lpe-section-menu lpe-section-menu__wrapper">${this.sectionMenu}</div>`
       )
         .attr({
           "data-placement": placement,
@@ -357,7 +367,7 @@
         .css({ position: "absolute" })
         [`${method}To`]($container);
       const offset = $container.offset();
-      const height = $container.height();
+      const height = $container.outerHeight();
       const width = $container.width();
       const sectionMenuHeight = $sectionMenu.height();
       const sectionMenuWidth = $sectionMenu.width();
@@ -370,9 +380,11 @@
     }
 
     removeControls() {
-      this.$activeItem.find(".js-lpe-wrapper").remove();
-      this.$element.find(".js-lp-editor__toggle").remove();
-      this.$element.find(".js-lp-editor__section-menu").remove();
+      if (this.$activeItem) {
+        this.$activeItem.find(".js-lpe-controls").remove();
+      }
+      this.$element.find(".js-lpe-toggle").remove();
+      this.$element.find(".js-lpe-section-menu").remove();
       this.$element.find(".lp-editor-controls-menu").remove();
       this.$componentMenu = false;
       this.$activeToggle = false;
@@ -380,13 +392,11 @@
 
     insertControls($element) {
       $element.addClass("js-lpe-active-item");
-      const $controls = $(`<div class="js-lpe-wrapper">${this.controls}</div>`)
+      const $controls = $(`<div class="js-lpe-controls lpe-controls__wrapper">${this.controls}</div>`)
         .css({ position: "absolute" })
         .hide();
       const offset = $element.offset();
-      const height = $element.height();
-      const width = $element.outerWidth();
-      this.$element.find(".js-lpe-wrapper").remove();
+      this.$element.find(".js-lpe-controls").remove();
       $element.prepend($controls.fadeIn(200));
       if (
         $element.parents(".lpe-layout").length === 0 &&
@@ -399,14 +409,6 @@
         this.insertToggle($element, "after", "append");
       }
       $controls.offset(offset);
-      const toggleHeight = $controls.find(".lp-editor__toggle").height();
-      const toggleWidth = $controls.find(".lp-editor__toggle").outerWidth();
-      $controls.find(".lp-editor__toggle").offset({
-        left: Math.floor(offset.left + width / 2 - toggleWidth / 2)
-      });
-      $controls.find(".lp-editor__toggle--after").offset({
-        top: Math.floor(offset.top + height - toggleHeight / 2) + 1
-      });
     }
 
     /**
@@ -429,7 +431,7 @@
       this.$activeToggle = $toggleButton;
       this.$activeToggle.addClass("active");
       this.$element
-        .find(".lp-editor__toggle, .js-lpe-wrapper")
+        .find(".lpe-toggle, .js-lpe-controls")
         .not(".active")
         .hide();
       this.$componentMenu = $(
@@ -496,8 +498,8 @@
 
     closeComponentMenu() {
       this.$componentMenu.remove();
-      this.$element.find(".lp-editor__toggle.active").removeClass("active");
-      this.$element.find(".lp-editor__toggle, .js-lpe-wrapper").show();
+      this.$element.find(".lpe-toggle.active").removeClass("active");
+      this.$element.find(".lpe-toggle, .js-lpe-controls").show();
       this.$componentMenu = false;
       this.$activeToggle = false;
       this.startInterval();
@@ -652,6 +654,15 @@
       );
     }
 
+    insertComponent(type) {
+      this.request(
+        `${this.settings.baseUrl}/insert-component/${type}`,
+        null,
+        true,
+        false
+      );
+    }
+
     /**
      * Inserts a new component into a region.
      * @param {string} parentUuid The parent component's uuid.
@@ -688,6 +699,9 @@
         return false;
       }
 
+      this.removeControls();
+      this.stopInterval();
+
       $({ translateY: 0 }).animate(
         { translateY: 100 * direction },
         {
@@ -704,6 +718,7 @@
             $sibling.css({ transform: "none" });
             $sibling[method]($moveItem);
             instance.insertControls($moveItem);
+            instance.startInterval();
           }
         }
       );
@@ -756,7 +771,7 @@
             const $handle = $(handle);
             if (
               $handle.closest(
-                ".lp-editor__controls,.js-lp-editor__toggle,.lpe-status,.js-lp-editor__section-menu"
+                ".lpe-controls,.js-lpe-toggle,.lpe-status,.js-lpe-section-menu"
               ).length
             ) {
               return false;
@@ -808,16 +823,16 @@
      * Called after
      */
     saved() {
-      this.$element
+      this.$banner
         .find(".lpe-save")
         .text(Drupal.t("Save"))
         .hide();
-      this.$element
+      this.$banner
         .find(".lpe-cancel")
         .text(Drupal.t("Done"))
         .fadeIn();
       setTimeout(() => {
-        this.$element.find(".lp-editor__banner--status").text(Drupal.t(""));
+        this.$banner.find(".lp-editor__banner--status").text(Drupal.t(""));
       }, 3000);
     }
 
@@ -832,7 +847,8 @@
     }
 
     isNotEmpty() {
-      this.$element.remove(".js-lpe-empty");
+      console.log("not empty");
+      this.$element.find(".js-lpe-empty").remove();
     }
 
     isEmpty() {

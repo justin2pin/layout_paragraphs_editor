@@ -39,7 +39,7 @@ function layout_paragraphs_editor_theme() {
       ],
     ],
     'layout_paragraphs_editor_empty_container' => [
-      'variables' => NULL,
+      'variables' => [],
     ],
     'layout_paragraphs_editor_enable' => [
       'variables' => [
