@@ -40,7 +40,7 @@
       );
 
       // Handle click for main save button.
-      $(".lpe-save", this.$element).click(e => {
+      $(".lpe-save-button", this.$banner).click(e => {
         this.save();
         return false;
       });
@@ -76,13 +76,18 @@
       this.$element.on("click.lp-editor", ".lpe-up", this.onClickUp.bind(this));
       this.$element.on(
         "click.lp-editor",
-        ".lp-editor-component-menu__action",
+        ".lpe-component-menu__action",
         this.onClickComponentAction.bind(this)
       );
       this.$element.on(
         "click.lp-editor",
         ".lpe-section-menu-button",
         this.onClickSectionAction.bind(this)
+      );
+      this.$element.on(
+        "keyup.lp-editor",
+        ".lpe-component-menu-search-input",
+        this.onKeyPressSearch.bind(this)
       );
       this.onKeyPress = this.onKeyPress.bind(this);
       document.addEventListener("keydown", this.onKeyPress);
@@ -227,6 +232,25 @@
           this.cancel();
         }
       }
+    }
+
+    /**
+     * Key press event handler.
+     * @param {Event} e The triggering event.
+     */
+    onKeyPressSearch(e) {
+      const text = e.currentTarget.value;
+      const pattern = new RegExp(text, "i");
+      const $searchItems = this.$componentMenu.find(".lpe-component-menu__item:not(.hidden)");
+      for (let i = 0; i < $searchItems.length; i++) {
+        const item = $searchItems[i];
+        if (pattern.test(item.innerText)) {
+          item.removeAttribute("style");
+        } else {
+          item.style.display = "none";
+        }
+      }
+      this.positionComponentMenu(true);
     }
 
     detachEventListeners() {
@@ -435,16 +459,23 @@
         .not(".active")
         .hide();
       this.$componentMenu = $(
-        `<div class="js-lpe-component-menu-wrapper">${this.componentMenu}</div>`
+        `<div class="js-lpe-component-menu lpe-component-menu__wrapper">${this.componentMenu}</div>`
       );
       if (this.settings.nestedSections === false) {
         if (this.$activeToggle.parents(".lpe-layout").length > 0) {
           this.$componentMenu
-            .find(".lp-editor-component-menu__group--layout")
+            .find(".lpe-component-menu__group--layout")
             .hide();
         }
       }
       this.$activeToggle.after(this.$componentMenu);
+      if (this.$componentMenu.find(".lpe-component-menu__item").length > 6) {
+        this.$componentMenu.find(".lpe-component-menu__search");
+        this.$componentMenu.find(".lpe-component-menu-search-input").focus();
+      }
+      else {
+        this.$componentMenu.find(".lpe-component-menu__search").hide();
+      }
       this.positionComponentMenu();
       this.stopInterval();
     }
@@ -611,8 +642,8 @@
      * Makes the Ajax reqeust to save the layout.
      */
     save() {
-      $(".lpe-save", this.$element).text(Drupal.t("Saving..."));
-      $(".lpe-cancel", this.$element).hide();
+      $(".lpe-save-button", this.$banner).text(Drupal.t("Saving..."));
+      $(".lpe-cancel-button", this.$banner).hide();
       const deleteUuids = this.trashBin.reduce((uuids, $current) => {
         uuids.push($current.attr("data-uuid"));
         $current.find(".lpe-component").each((i, item) => {
@@ -824,11 +855,11 @@
      */
     saved() {
       this.$banner
-        .find(".lpe-save")
+        .find(".lpe-save-button")
         .text(Drupal.t("Save"))
         .hide();
       this.$banner
-        .find(".lpe-cancel")
+        .find(".lpe-cancel-button")
         .text(Drupal.t("Done"))
         .fadeIn();
       setTimeout(() => {
@@ -837,9 +868,9 @@
     }
 
     edited() {
-      this.$element.find(".lpe-save").show();
-      this.$element.find(".lpe-cancel").text(Drupal.t("Cancel"));
-      if (this.$element.find(".lpe-component").length > 0) {
+      this.$banner.find(".lpe-save-button").show();
+      this.$banner.find(".lpe-cancel-button").text(Drupal.t("Cancel"));
+      if (this.$banner.find(".lpe-component").length > 0) {
         this.isNotEmpty();
       } else {
         this.isEmpty();

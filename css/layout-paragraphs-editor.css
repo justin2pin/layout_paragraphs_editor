@@ -262,7 +262,7 @@
   width: auto;
   margin-right: 10px;
 }
-.js-lpe-component-menu-wrapper {
+.lpe-component-menu__wrapper {
   position: absolute;
   width: 300px;
   z-index: 95;
@@ -270,11 +270,11 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, .15);
   border-radius: 15px;
 }
-.lp-editor-component-menu {
+.lpe-component-menu {
   padding: 20px;
 }
 
-.js-lpe-component-menu-wrapper.beneath::before {
+.lpe-component-menu__wrapper.beneath::before {
   content: " ";
   width: 16px;
   height: 16px;
@@ -286,7 +286,7 @@
   background: #fff;
   transform: rotate(45deg);
 }
-.js-lpe-component-menu-wrapper.above::after {
+.lpe-component-menu__wrapper.above::after {
   content: " ";
   width: 16px;
   height: 16px;
@@ -298,13 +298,20 @@
   background: #fff;
   transform: rotate(45deg);
 }
-.lp-editor-component-menu__group--layout,
-.lp-editor-component-menu__group--content {
+.lpe-component-menu-search-input {
+  width: 100%;
+}
+.lpe-component-menu__group {
+  max-height: 280px;
+  overflow-y: auto;
+}
+.lpe-component-menu__group--layout,
+.lpe-component-menu__group--content {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
-.lp-editor-component-menu__item {
+.lpe-component-menu__item {
   display: block;
   width: 33%;
   border: none;
@@ -312,8 +319,8 @@
   text-align: center;
   border-radius: 10px;
 }
-.lp-editor-component-menu__item a,
-.lp-editor-component-menu__item a:not([class]) {
+.lpe-component-menu__item a,
+.lpe-component-menu__item a:not([class]) {
   color: #0074bd !important; /* @todo remove this */
   text-align: center;
   display: block;
@@ -321,10 +328,10 @@
   margin: 10px;
   font-size: 14px;
 }
-.lp-editor-component-menu__item:hover {
+.lpe-component-menu__item:hover {
   background: #eee;
 }
-.lp-editor-component-menu__item img {
+.lpe-component-menu__item img {
   width: 24px;
   height: 24px;
 }
