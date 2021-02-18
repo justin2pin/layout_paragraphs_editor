@@ -102,3 +102,18 @@ layout_paragraphs_editor.cancel:
     _admin_route: TRUE
   requirements:
     _permission: 'administer content'
+
+layout_paragraphs_editor.test:
+  path: '/layout_paragraphs_editor/edit/{entity_type}/{entity}/{field_name}/{view_mode}/{layout_paragraphs_layout}/test-form'
+  defaults:
+    _controller: '\Drupal\layout_paragraphs_editor\Controller\LayoutParagraphsEditorController::testForm'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+        load_latest_revision: true
+      layout_paragraphs_layout:
+        layout_paragraphs_editor_tempstore: TRUE
+    _admin_route: FALSE
+  requirements:
+    _permission: 'administer content'

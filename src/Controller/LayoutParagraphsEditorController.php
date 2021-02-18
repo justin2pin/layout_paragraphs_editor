@@ -303,4 +303,37 @@ class LayoutParagraphsEditorController extends ControllerBase {
 
   }
 
+  /**
+   * Insert a sibling paragraph into the field.
+   *
+   * @param Drupal\layout_paragraphs\LayoutParagraphsLayout $layout_paragraphs_layout
+   *   The layout paragraphs editor from the tempstore.
+   * @param Drupal\paragraphs\ParagraphsTypeInterface $paragraph_type
+   *   The paragraph type for the new content being added.
+   *
+   * @return Drupal\Core\Ajax\AjaxResponse
+   *   Returns the edit form render array.
+   */
+  public function testForm(LayoutParagraphsLayout $layout_paragraphs_layout) {
+
+    $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
+    $bundle_key = $entity_type->getKey('bundle');
+
+    /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+    $paragraph = $this->entityTypeManager()->getStorage('paragraph')
+      ->create([$bundle_key => 'section']);
+
+    $context = [
+      'insert' => TRUE,
+    ];
+    $form = $this->formBuilder()->getForm(
+      '\Drupal\layout_paragraphs_editor\Form\LayoutParagraphsEditorEditForm',
+      $layout_paragraphs_layout,
+      $paragraph,
+      $context
+    );
+    return $form;
+
+  }
+
 }

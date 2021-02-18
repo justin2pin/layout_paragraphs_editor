@@ -1,5 +1,10 @@
 .lp-editor {
   margin-bottom: 20px;
+  min-height: 55px;
+  position: relative;
+}
+.lp-editor:hover {
+  outline: 1px dotted #ccc;
 }
 .lpe-enable__wrapper {
   border-radius: 50%;
