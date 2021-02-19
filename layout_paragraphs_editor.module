@@ -50,6 +50,10 @@ function layout_paragraphs_editor_theme() {
         'field_label' => NULL,
       ],
     ],
+    'field__layout_paragraphs_editor' => [
+      'template' => 'field--layout-paragraphs-editor',
+      'base hook' => 'field',
+    ],
   ];
 }
 
@@ -75,6 +79,18 @@ function layout_paragraphs_editor_preprocess_paragraph(array &$variables) {
         $region['#attributes']['data-region-uuid'] = $variables['paragraph']->uuid() . '-' . $region_name;
         $region['#attributes']['tabindex'] = 0;
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_field_alter().
+ */
+function layout_paragraphs_theme_suggestions_field_alter(&$suggestions, $variables) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if (strpos($route_name, 'layout_paragraphs_editor.editor') === 0) {
+    if ($variables['element']['#formatter'] == 'layout_paragraphs_editor') {
+      $suggestions[] = 'field__layout_paragraphs_editor';
     }
   }
 }

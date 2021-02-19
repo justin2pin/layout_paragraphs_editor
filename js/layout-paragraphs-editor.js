@@ -46,7 +46,7 @@
       });
 
       // Handle click for main cancel button.
-      $(".lpe-cancel", this.$element).click(e => {
+      $(".lpe-cancel-button", this.$banner).click(e => {
         this.cancel();
         return false;
       });

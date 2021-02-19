@@ -58,6 +58,20 @@ class LayoutParagraphsEditorEditForm extends FormBase {
   protected $context;
 
   /**
+   * The paragraph type.
+   *
+   * @var \Drupal\paragraphs\Entity\ParagraphsType
+   */
+  protected $paragraphType;
+
+  /**
+   * The paragraph.
+   *
+   * @var \Drupal\paragraphs\Entity\Paragraph
+   */
+  protected $paragraph;
+
+  /**
    * Constructs a LayoutParagraphsEditorEditForm instance.
    *
    * @param Drupal\layout_paragraphs_editor\EditorTempstoreRepository $tempstore
@@ -102,6 +116,8 @@ class LayoutParagraphsEditorEditForm extends FormBase {
     $display = EntityFormDisplay::collectRenderDisplay($paragraph, 'default');
     $this->layoutParagraphsLayout = $layout_paragraphs_layout;
     $this->context = $context;
+    $this->paragraph = $paragraph;
+    $this->paragraphType = $paragraph->getParagraphType();
 
     $form = [
       '#paragraph' => $paragraph,
@@ -124,14 +140,12 @@ class LayoutParagraphsEditorEditForm extends FormBase {
       ],
     ];
 
-    $paragraphs_type = $paragraph->getParagraphType();
-    if ($paragraphs_type->hasEnabledBehaviorPlugin('layout_paragraphs')) {
-      $form['layout_paragraphs'] = [];
-      $layout_paragraphs_plugin = $paragraphs_type->getEnabledBehaviorPlugins()['layout_paragraphs'];
-      $subform_state = SubformState::createForSubform($form['layout_paragraphs'], $form, $form_state);
-      if ($layout_paragraphs_plugin_form = $layout_paragraphs_plugin->buildBehaviorForm($paragraph, $form['layout_paragraphs'], $subform_state)) {
-        $form['layout_paragraphs'] = $layout_paragraphs_plugin_form;
-      }
+    if ($this->paragraphType->hasEnabledBehaviorPlugin('layout_paragraphs')) {
+      $form['layout_paragraphs'] = [
+        '#process' => [
+          [$this, 'layoutParagraphsBehaviorForm'],
+        ],
+      ];
     }
 
     // Support for Field Group module based on Paragraphs module.
@@ -160,6 +174,16 @@ class LayoutParagraphsEditorEditForm extends FormBase {
 
     $display->buildForm($paragraph, $form['entity_form'], $form_state);
     return $form;
+  }
+
+  public function layoutParagraphsBehaviorForm(array $element, FormStateInterface $form_state, $form) {
+
+    $layout_paragraphs_plugin = $this->paragraphType->getEnabledBehaviorPlugins()['layout_paragraphs'];
+    $subform_state = SubformState::createForSubform($element, $form, $form_state);
+    if ($layout_paragraphs_plugin_form = $layout_paragraphs_plugin->buildBehaviorForm($this->paragraph, $element, $subform_state)) {
+      $element = $layout_paragraphs_plugin_form;
+    }
+    return $element;
   }
 
   /**
