@@ -17,6 +17,7 @@ use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\layout_paragraphs\Plugin\Field\FieldFormatter\LayoutParagraphsFormatter;
 use Drupal\layout_paragraphs_editor\EditorTempstoreRepository;
 use Drupal\Core\Form\FormBuilder;
+use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * Layout Paragraphs field formatter.
@@ -75,6 +76,13 @@ class LayoutParagraphsEditorFormatter extends LayoutParagraphsFormatter {
   protected $formBuilder;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * {@inheritDoc}
    */
   public function __construct(
@@ -93,7 +101,8 @@ class LayoutParagraphsEditorFormatter extends LayoutParagraphsFormatter {
     Renderer $renderer,
     EditorTempstoreRepository $layout_paragraphs_editor_tempstore,
     CurrentRouteMatch $route_match_service,
-    FormBuilder $form_builder
+    FormBuilder $form_builder,
+    AccountProxyInterface $current_user
     ) {
     parent::__construct($plugin_id,
       $plugin_definition,
@@ -113,6 +122,7 @@ class LayoutParagraphsEditorFormatter extends LayoutParagraphsFormatter {
     $this->tempstore = $layout_paragraphs_editor_tempstore;
     $this->routeMatch = $route_match_service;
     $this->formBuilder = $form_builder;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -138,7 +148,8 @@ class LayoutParagraphsEditorFormatter extends LayoutParagraphsFormatter {
       $container->get('renderer'),
       $container->get('layout_paragraphs_editor.tempstore_repository'),
       $container->get('current_route_match'),
-      $container->get('form_builder')
+      $container->get('form_builder'),
+      $container->get('current_user')
     );
   }
 
@@ -149,6 +160,10 @@ class LayoutParagraphsEditorFormatter extends LayoutParagraphsFormatter {
 
     $elements['content'] = parent::view($items, $langcode);
     $entity = $items->getEntity();
+    if (!$entity->access('update', $this->currentUser)) {
+      return $elements['content'];
+    }
+
     /** @var \Drupal\Core\Entity\EntityDefintion $definition */
     $definition = $items->getFieldDefinition();
     $field_name = $definition->get('field_name');
@@ -171,6 +186,7 @@ class LayoutParagraphsEditorFormatter extends LayoutParagraphsFormatter {
         '#field_label' => $field_label,
         '#is_empty' => $items->isEmpty(),
         '#weight' => '-1000',
+        '#access' => $entity->access('update', $this->currentUser),
       ];
     }
     // Editing, so decorate with necessary ids and js settings.

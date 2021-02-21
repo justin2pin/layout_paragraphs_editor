@@ -14,9 +14,7 @@
       this._interval = 200;
       this._statusIntervalId = 0;
       this._statusInterval = 3000;
-      this.$banner = $("body").append(
-        this.$element.find(".lpe-banner__wrapper")
-      );
+      this.$banner = this.$element.find(".lpe-banner__wrapper").appendTo("body");
 
       if (this.$element.find(".lpe-component").length === 0) {
         this.isEmpty();
@@ -673,6 +671,8 @@
         .execute()
         .done(e => {
           instance.detachEventListeners();
+          console.log(instance.$banner);
+          instance.$banner.remove();
         });
     }
 
@@ -870,7 +870,7 @@
     edited() {
       this.$banner.find(".lpe-save-button").show();
       this.$banner.find(".lpe-cancel-button").text(Drupal.t("Cancel"));
-      if (this.$banner.find(".lpe-component").length > 0) {
+      if (this.$element.find(".lpe-component").length > 0) {
         this.isNotEmpty();
       } else {
         this.isEmpty();
@@ -878,14 +878,13 @@
     }
 
     isNotEmpty() {
-      console.log("not empty");
       this.$element.find(".js-lpe-empty").remove();
     }
 
     isEmpty() {
       this.isNotEmpty();
       const $emptyContainer = $(
-        `<div class="js-lpe-empty">${this.emptyContainer}</div>`
+        `<div class="js-lpe-empty lpe-empty-container__wrapper">${this.emptyContainer}</div>`
       ).appendTo(this.$element);
       if (this.settings.requireSections) {
         this.insertSectionMenu($emptyContainer, "insert", "append");

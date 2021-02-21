@@ -4,7 +4,6 @@
   position: relative;
 }
 .lp-editor:hover {
-  outline: 1px dotted #ccc;
 }
 .lpe-enable__wrapper {
   border-radius: 50%;
@@ -54,6 +53,9 @@
   opacity: 1;
   background-color: #f5f5f5;
   box-shadow: 0 5px 15px rgba(0, 0, 0, .20);
+}
+.lpe-enable__empty-message {
+  padding: 20px;
 }
 .lpe-banner {
   display: flex;
