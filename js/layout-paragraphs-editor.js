@@ -1,6 +1,7 @@
 (($, Drupal, drupalSettings, dragula) => {
   class LPEditor {
     constructor(settings) {
+      this._edited = false;
       this.settings = settings;
       this.$element = $(settings.selector);
       this.componentMenu = settings.componentMenu;
@@ -89,6 +90,8 @@
       );
       this.onKeyPress = this.onKeyPress.bind(this);
       document.addEventListener("keydown", this.onKeyPress);
+      this.onBeforeUnload = this.onBeforeUnload.bind(this);
+      window.addEventListener("beforeunload", this.onBeforeUnload);
     }
 
     onMouseMove(e) {
@@ -251,11 +254,23 @@
       this.positionComponentMenu(true);
     }
 
+    /**
+     * Before unload event handler.
+     * @param {Event} e The triggering event.
+     */
+    onBeforeUnload(e) {
+      if (this._edited) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    }
+
     detachEventListeners() {
       this.$element.off(".lp-editor");
       this.$element.off(".lp-editor");
       clearInterval(this._intervalId);
       document.removeEventListener("keydown", this.onKeyPress);
+      window.removeEventListener("onbeforeunload", this.onBeforeUnload);
     }
 
     getState() {
@@ -865,6 +880,7 @@
       setTimeout(() => {
         this.$banner.find(".lp-editor__banner--status").text(Drupal.t(""));
       }, 3000);
+      this._edited = false;
     }
 
     edited() {
@@ -875,6 +891,7 @@
       } else {
         this.isEmpty();
       }
+      this._edited = true;
     }
 
     isNotEmpty() {

@@ -1,3 +1,7 @@
+
+.lpe-dialog {
+  z-index: 700;
+}
 .lp-editor {
   margin-bottom: 20px;
   min-height: 55px;
@@ -88,7 +92,7 @@
   flex-direction: row;
   margin: 0 !important;
 }
-.lp-editor__save {
+.lpe-save-button {
   margin-left: 10px;
 }
 .lpe-region {
@@ -134,6 +138,7 @@
   border-radius: 25px;
   display: flex;
   float: left;
+  z-index: 10;
 }
 .lpe-controls button span {
   display: block;

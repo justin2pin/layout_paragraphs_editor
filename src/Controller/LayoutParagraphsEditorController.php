@@ -33,6 +33,13 @@ class LayoutParagraphsEditorController extends ControllerBase {
   protected $editorTempstore;
 
   /**
+   * Settings to pass to jQuery modal dialog.
+   *
+   * @var array
+   */
+  protected $modalSettings;
+
+  /**
    * Construct a Layout Paragraphs Editor controller.
    *
    * @param \Drupal\layout_paragraphs_editor\EditorTempstoreRepository $editor_tempstore
@@ -40,6 +47,14 @@ class LayoutParagraphsEditorController extends ControllerBase {
    */
   public function __construct(EditorTempstoreRepository $editor_tempstore) {
     $this->editorTempstore = $editor_tempstore;
+    $this->modalSettings = [
+      'width' => '80%',
+      'max-width' => 600,
+      'draggable' => TRUE,
+      'classes' => [
+        'ui-dialog' => 'lpe-dialog',
+      ],
+    ];
   }
 
   /**
@@ -94,13 +109,15 @@ class LayoutParagraphsEditorController extends ControllerBase {
     $paragraph = $layout_paragraphs_layout
       ->getComponentByUuid($paragraph_uuid)
       ->getEntity();
+    $paragraph_type = $paragraph->getParagraphType();
+    $label = $this->t('Edit @type', ['@type' => $paragraph_type->label()]);
     $form = $this->formBuilder()->getForm(
       '\Drupal\layout_paragraphs_editor\Form\LayoutParagraphsEditorEditForm',
       $layout_paragraphs_layout,
       $paragraph,
       ['insert' => FALSE]
     );
-    $response->addCommand(new OpenModalDialogCommand('Edit Form', $form, ['width' => '80%']));
+    $response->addCommand(new OpenModalDialogCommand($label, $form, $this->modalSettings));
     return $response;
   }
 
@@ -184,6 +201,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
 
     $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
     $bundle_key = $entity_type->getKey('bundle');
+    $label = $this->t('Create @type', ['@type' => $paragraph_type->label()]);
 
     /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
     $paragraph = $this->entityTypeManager()->getStorage('paragraph')
@@ -211,7 +229,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
       $paragraph,
       $context
     );
-    $response->addCommand(new OpenModalDialogCommand('Create Form', $form, ['width' => '80%']));
+    $response->addCommand(new OpenModalDialogCommand($label, $form, $this->modalSettings));
     return $response;
 
   }
@@ -241,6 +259,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
 
     $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
     $bundle_key = $entity_type->getKey('bundle');
+    $label = $this->t('Edit @type', ['@type' => $paragraph_type->label()]);
 
     /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
     $paragraph = $this->entityTypeManager()->getStorage('paragraph')
@@ -260,7 +279,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
       $paragraph,
       $context
     );
-    $response->addCommand(new OpenModalDialogCommand('Create Form', $form, ['width' => '80%']));
+    $response->addCommand(new OpenModalDialogCommand($label, $form, $this->modalSettings));
     return $response;
   }
 
@@ -281,6 +300,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
 
     $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
     $bundle_key = $entity_type->getKey('bundle');
+    $label = $this->t('Edit @type', ['@type' => $paragraph_type->label()]);
 
     /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
     $paragraph = $this->entityTypeManager()->getStorage('paragraph')
@@ -298,7 +318,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
       $paragraph,
       $context
     );
-    $response->addCommand(new OpenModalDialogCommand('Create Form', $form, ['width' => '80%']));
+    $response->addCommand(new OpenModalDialogCommand($label, $form, $this->modalSettings));
     return $response;
 
   }
