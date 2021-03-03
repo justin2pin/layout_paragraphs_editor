@@ -1,15 +1,15 @@
-<div class="lp-editor-component-menu">
+<div class="lpe-component-menu">
   <h4 class="visually-hidden">{{ 'Add Item'|t }}</h4>
-  <div class="lp-editor-component-menu__search hidden">
-    <input type="text" placeholder="{{ search_text }}" />
+  <div class="lpe-component-menu__search">
+    <input class="lpe-component-menu-search-input" type="text" placeholder="Filter items..." />
   </div>
-  <div class="lp-editor-component-menu__group">
+  <div class="lpe-component-menu__group">
     {% if types.layout %}
-    <div class="lp-editor-component-menu__group--layout">
+    <div class="lpe-component-menu__group--layout">
     {% endif %}
     {% for type in types.layout %}
-      <div class="lp-editor-component-menu__item type-{{type.id}} is-layout">
-        <a class="lp-editor-component-menu__action" data-type="{{ type.id }}" href="#{{ type.id }}" title="{{ type.title }}">
+      <div class="lpe-component-menu__item type-{{type.id}} is-layout">
+        <a class="lpe-component-menu__action" data-type="{{ type.id }}" href="#{{ type.id }}" title="{{ type.title }}">
         {% if type.image %}
         <img src="{{ type.image }}" alt ="" />
         {% endif %}
@@ -21,11 +21,11 @@
     </div>
     {% endif %}
     {% if types.content %}
-    <div class="lp-editor-component-menu__group--content">
+    <div class="lpe-component-menu__group--content">
     {% endif %}
     {% for type in types.content %}
-      <div class="lp-editor-component-menu__item type-{{type.id}}">
-        <a class="lp-editor-component-menu__action" data-type="{{ type.id }}" href="#{{ type.id }}" title="{{ type.title }}">
+      <div class="lpe-component-menu__item type-{{type.id}}">
+        <a class="lpe-component-menu__action" data-type="{{ type.id }}" href="#{{ type.id }}" title="{{ type.title }}">
         {% if type.image %}
         <img src="{{ type.image }}" alt ="" />
         {% endif %}

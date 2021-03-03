@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Ajax\AjaxHelperTrait;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\OpenDialogCommand;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityInterface;
@@ -33,6 +34,13 @@ class LayoutParagraphsEditorController extends ControllerBase {
   protected $editorTempstore;
 
   /**
+   * Settings to pass to jQuery modal dialog.
+   *
+   * @var array
+   */
+  protected $modalSettings;
+
+  /**
    * Construct a Layout Paragraphs Editor controller.
    *
    * @param \Drupal\layout_paragraphs_editor\EditorTempstoreRepository $editor_tempstore
@@ -40,6 +48,15 @@ class LayoutParagraphsEditorController extends ControllerBase {
    */
   public function __construct(EditorTempstoreRepository $editor_tempstore) {
     $this->editorTempstore = $editor_tempstore;
+    $this->modalSettings = [
+      'width' => '70%',
+      'minWidth' => 500,
+      'draggable' => TRUE,
+      'classes' => [
+        'ui-dialog' => 'lpe-dialog',
+      ],
+      'modal' => TRUE,
+    ];
   }
 
   /**
@@ -94,13 +111,16 @@ class LayoutParagraphsEditorController extends ControllerBase {
     $paragraph = $layout_paragraphs_layout
       ->getComponentByUuid($paragraph_uuid)
       ->getEntity();
+    $paragraph_type = $paragraph->getParagraphType();
+    $label = $this->t('Edit @type', ['@type' => $paragraph_type->label()]);
     $form = $this->formBuilder()->getForm(
       '\Drupal\layout_paragraphs_editor\Form\LayoutParagraphsEditorEditForm',
       $layout_paragraphs_layout,
       $paragraph,
       ['insert' => FALSE]
     );
-    $response->addCommand(new OpenModalDialogCommand('Edit Form', $form, ['width' => '80%']));
+
+    $this->addFormResponse($response, $label, $form);
     return $response;
   }
 
@@ -184,6 +204,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
 
     $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
     $bundle_key = $entity_type->getKey('bundle');
+    $label = $this->t('Create @type', ['@type' => $paragraph_type->label()]);
 
     /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
     $paragraph = $this->entityTypeManager()->getStorage('paragraph')
@@ -211,7 +232,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
       $paragraph,
       $context
     );
-    $response->addCommand(new OpenModalDialogCommand('Create Form', $form, ['width' => '80%']));
+    $this->addFormResponse($response, $label, $form);
     return $response;
 
   }
@@ -241,6 +262,7 @@ class LayoutParagraphsEditorController extends ControllerBase {
 
     $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
     $bundle_key = $entity_type->getKey('bundle');
+    $label = $this->t('Edit @type', ['@type' => $paragraph_type->label()]);
 
     /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
     $paragraph = $this->entityTypeManager()->getStorage('paragraph')
@@ -260,8 +282,96 @@ class LayoutParagraphsEditorController extends ControllerBase {
       $paragraph,
       $context
     );
-    $response->addCommand(new OpenModalDialogCommand('Create Form', $form, ['width' => '80%']));
+    $this->addFormResponse($response, $label, $form);
+    return $response;
+  }
+
+  /**
+   * Insert a sibling paragraph into the field.
+   *
+   * @param Drupal\layout_paragraphs\LayoutParagraphsLayout $layout_paragraphs_layout
+   *   The layout paragraphs editor from the tempstore.
+   * @param Drupal\paragraphs\ParagraphsTypeInterface $paragraph_type
+   *   The paragraph type for the new content being added.
+   *
+   * @return Drupal\Core\Ajax\AjaxResponse
+   *   Returns the edit form render array.
+   */
+  public function insertComponent(
+    LayoutParagraphsLayout $layout_paragraphs_layout,
+    ParagraphsTypeInterface $paragraph_type) {
+
+    $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
+    $bundle_key = $entity_type->getKey('bundle');
+    $label = $this->t('Edit @type', ['@type' => $paragraph_type->label()]);
+
+    /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+    $paragraph = $this->entityTypeManager()->getStorage('paragraph')
+      ->create([$bundle_key => $paragraph_type->id()]);
+    $layout_paragraphs_layout->appendComponent($paragraph);
+
+    $context = [
+      'insert' => TRUE,
+    ];
+
+    $response = new AjaxResponse();
+    $form = $this->formBuilder()->getForm(
+      '\Drupal\layout_paragraphs_editor\Form\LayoutParagraphsEditorEditForm',
+      $layout_paragraphs_layout,
+      $paragraph,
+      $context
+    );
+    $this->addFormResponse($response, $label, $form);
     return $response;
 
   }
+
+  /**
+   * Insert a sibling paragraph into the field.
+   *
+   * @param Drupal\layout_paragraphs\LayoutParagraphsLayout $layout_paragraphs_layout
+   *   The layout paragraphs editor from the tempstore.
+   * @param Drupal\paragraphs\ParagraphsTypeInterface $paragraph_type
+   *   The paragraph type for the new content being added.
+   *
+   * @return Drupal\Core\Ajax\AjaxResponse
+   *   Returns the edit form render array.
+   */
+  public function testForm(LayoutParagraphsLayout $layout_paragraphs_layout) {
+
+    $entity_type = $this->entityTypeManager()->getDefinition('paragraph');
+    $bundle_key = $entity_type->getKey('bundle');
+
+    /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+    $paragraph = $this->entityTypeManager()->getStorage('paragraph')
+      ->create([$bundle_key => 'section']);
+
+    $context = [
+      'insert' => TRUE,
+    ];
+    $form = $this->formBuilder()->getForm(
+      '\Drupal\layout_paragraphs_editor\Form\LayoutParagraphsEditorEditForm',
+      $layout_paragraphs_layout,
+      $paragraph,
+      $context
+    );
+    return $form;
+  }
+
+  /**
+   * Adds the paragraph form to an ajax response.
+   *
+   * @param Drupal\Core\Ajax\AjaxResponse $response
+   *   The ajax response object.
+   * @param string $title
+   *   The form title.
+   * @param array $form
+   *   The form array.
+   */
+  protected function addFormResponse(AjaxResponse &$response, string $title, array $form) {
+    $selector = '#' . $form['#dialog_id'];
+    $response->addCommand(new OpenDialogCommand($selector, $title, $form, $this->modalSettings));
+    //$response->addCommand(new OpenModalDialogCommand($title, $form, $this->modalSettings));
+  }
+
 }

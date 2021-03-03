@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\Core\Ajax\AfterCommand;
 use Drupal\Core\Ajax\BeforeCommand;
 use Drupal\Core\Ajax\AppendCommand;
@@ -21,6 +21,7 @@ use Drupal\Core\Form\SubformState;
 use Drupal\layout_paragraphs_editor\EditorTempstoreRepository;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\layout_paragraphs_editor\Ajax\LayoutParagraphsEditorInvokeHookCommand;
+use Drupal\Component\Utility\Html;
 
 /**
  * Class LayoutParagraphsEditorFormBase.
@@ -56,6 +57,20 @@ class LayoutParagraphsEditorEditForm extends FormBase {
    * @var array
    */
   protected $context;
+
+  /**
+   * The paragraph type.
+   *
+   * @var \Drupal\paragraphs\Entity\ParagraphsType
+   */
+  protected $paragraphType;
+
+  /**
+   * The paragraph.
+   *
+   * @var \Drupal\paragraphs\Entity\Paragraph
+   */
+  protected $paragraph;
 
   /**
    * Constructs a LayoutParagraphsEditorEditForm instance.
@@ -102,13 +117,19 @@ class LayoutParagraphsEditorEditForm extends FormBase {
     $display = EntityFormDisplay::collectRenderDisplay($paragraph, 'default');
     $this->layoutParagraphsLayout = $layout_paragraphs_layout;
     $this->context = $context;
+    $this->paragraph = $paragraph;
+    $this->paragraphType = $paragraph->getParagraphType();
 
     $form = [
       '#paragraph' => $paragraph,
       '#display' => $display,
       '#tree' => TRUE,
+      '#after_build' => [
+        [$this, 'afterBuild'],
+      ],
       'entity_form' => [
         '#weight' => 10,
+        '#parents' => ['entity_form'],
       ],
       'actions' => [
         '#weight' => 20,
@@ -117,21 +138,19 @@ class LayoutParagraphsEditorEditForm extends FormBase {
           '#type' => 'submit',
           '#value' => $this->t('Submit'),
           '#ajax' => [
-            'callback' => [$this, 'ajaxSubmit'],
+            'callback' => '::ajaxSubmit',
             'progress' => 'none',
           ],
         ],
       ],
     ];
 
-    $paragraphs_type = $paragraph->getParagraphType();
-    if ($paragraphs_type->hasEnabledBehaviorPlugin('layout_paragraphs')) {
-      $form['layout_paragraphs'] = [];
-      $layout_paragraphs_plugin = $paragraphs_type->getEnabledBehaviorPlugins()['layout_paragraphs'];
-      $subform_state = SubformState::createForSubform($form['layout_paragraphs'], $form, $form_state);
-      if ($layout_paragraphs_plugin_form = $layout_paragraphs_plugin->buildBehaviorForm($paragraph, $form['layout_paragraphs'], $subform_state)) {
-        $form['layout_paragraphs'] = $layout_paragraphs_plugin_form;
-      }
+    if ($this->paragraphType->hasEnabledBehaviorPlugin('layout_paragraphs')) {
+      $form['layout_paragraphs'] = [
+        '#process' => [
+          [$this, 'layoutParagraphsBehaviorForm'],
+        ],
+      ];
     }
 
     // Support for Field Group module based on Paragraphs module.
@@ -163,6 +182,37 @@ class LayoutParagraphsEditorEditForm extends FormBase {
   }
 
   /**
+   * After build callback fixes issues with data-drupal-selector.
+   *
+   * See https://www.drupal.org/project/drupal/issues/2897377
+   *
+   * @param array $element
+   *   The form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The form element.
+   */
+  public function afterBuild(array $element, FormStateInterface $form_state) {
+    $parents = array_merge($element['#parents'], [$this->getFormId()]);
+    $unprocessed_id = 'edit-' . implode('-', $parents);
+    $element['#attributes']['data-drupal-selector'] = Html::getId($unprocessed_id);
+    $element['#dialog_id'] = $unprocessed_id . '-dialog';
+    return $element;
+  }
+
+  public function layoutParagraphsBehaviorForm(array $element, FormStateInterface $form_state, $form) {
+
+    $layout_paragraphs_plugin = $this->paragraphType->getEnabledBehaviorPlugins()['layout_paragraphs'];
+    $subform_state = SubformState::createForSubform($element, $form, $form_state);
+    if ($layout_paragraphs_plugin_form = $layout_paragraphs_plugin->buildBehaviorForm($this->paragraph, $element, $subform_state)) {
+      $element = $layout_paragraphs_plugin_form;
+    }
+    return $element;
+  }
+
+  /**
    * {@inheritDoc}
    */
   public function successfulAjaxSubmit(array $form, FormStateInterface $form_state) {
@@ -188,10 +238,14 @@ class LayoutParagraphsEditorEditForm extends FormBase {
           new BeforeCommand("[data-uuid={$sibling_uuid}]", $rendered_item) :
             new AfterCommand("[data-uuid={$sibling_uuid}]", $rendered_item);
       }
-      if (!empty($this->context['parent_uuid']) && !empty($this->context['region'])) {
+      elseif (!empty($this->context['parent_uuid']) && !empty($this->context['region'])) {
         $parent_uuid = $this->context['parent_uuid'];
         $region = $this->context['region'];
         $command = new AppendCommand("[data-region-uuid='{$parent_uuid}-{$region}']", $rendered_item);
+      }
+      else {
+        $lp_editor_id = $this->layoutParagraphsLayout->id();
+        $command = new AppendCommand("[data-lp-editor-id='{$lp_editor_id}']", $rendered_item);
       }
       $response->addCommand($command);
       $response->addCommand(new LayoutParagraphsEditorInvokeHookCommand(
@@ -215,16 +269,9 @@ class LayoutParagraphsEditorEditForm extends FormBase {
     }
 
     $response->addCommand(new InvokeCommand("[data-uuid={$uuid}]", "focus"));
-    $response->addCommand(new CloseModalDialogCommand());
+    $response->addCommand(new CloseDialogCommand('#' . $form['#dialog_id']));
 
     return $response;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-
   }
 
   /**
@@ -234,8 +281,6 @@ class LayoutParagraphsEditorEditForm extends FormBase {
 
     /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
     $paragraph = $form['#paragraph'];
-    /** @var Drupal\layout_paragraph\LayoutParagraphsEditor $layout_paragraphs_editor */
-    $layout_paragraphs_editor = $form['#layout_paragraphs_editor'];
     /** @var Drupal\Core\Entity\Entity\EntityFormDisplay $display */
     $display = $form['#display'];
 
