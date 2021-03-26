@@ -1011,14 +1011,16 @@
           }
         );
       }
-      $(".lpe-enable-button").click(e => {
-        const $a = $(e.target).closest("a");
-        $a.addClass("active").addClass("loading");
-        Drupal.ajax({
-          url: $a.attr("href")
-        }).execute();
-        return false;
-      });
+      $(".lpe-enable-button")
+        .once("lp-editor")
+        .click(e => {
+          const $a = $(e.target).closest("a");
+          $a.addClass("active").addClass("loading");
+          Drupal.ajax({
+            url: $a.attr("href")
+          }).execute();
+          return false;
+        });
     }
   };
   Drupal.AjaxCommands.prototype.layoutParagraphsEditorInvokeHook = (
