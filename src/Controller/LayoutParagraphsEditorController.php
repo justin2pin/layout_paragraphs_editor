@@ -140,14 +140,6 @@ class LayoutParagraphsEditorController extends ControllerBase {
       $layout_paragraphs_layout->reorderComponents($ordered_components);
     }
     $entity = $layout_paragraphs_layout->getEntity();
-    if ($entity instanceof RevisionableInterface) {
-      $entity->setNewRevision(TRUE);
-    }
-    if ($entity instanceof RevisionLogInterface) {
-      $entity->setRevisionLogMessage('Layout Paragraphs Editor revision');
-      $entity->setRevisionCreationTime(time());
-      $entity->setRevisionUserId($this->currentUser()->id());
-    }
     $entity->save();
     $layout_paragraphs_layout->setEntity($entity);
     $this->editorTempstore->set($layout_paragraphs_layout);
