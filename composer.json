@@ -1,0 +1,12 @@
+{
+  "name": "drupal/layout_paragraphs_editor",
+  "type": "drupal-module",
+  "description": "Front-end editor widget for Layout Paragraphs",
+  "keywords": [
+    "Drupal"
+  ],
+  "license": "GPL-2.0+",
+  "require": {
+      "drupal/core": "^8.8 || ^9"
+  }
+}

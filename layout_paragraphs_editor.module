@@ -74,6 +74,9 @@ function layout_paragraphs_editor_preprocess_paragraph(array &$variables) {
       $variables['attributes']['class'][] = 'lpe-layout';
       foreach (Element::children($variables['content']['regions']) as $region_name) {
         $region =& $variables['content']['regions'][$region_name];
+        $region['placeholder'] = [
+          '#markup' => '<div data-lpe-empty-region>&nbsp;</div>',
+        ];
         $region['#attributes']['class'][] = 'lpe-region';
         $region['#attributes']['data-region'] = $region_name;
         $region['#attributes']['data-region-uuid'] = $variables['paragraph']->uuid() . '-' . $region_name;
